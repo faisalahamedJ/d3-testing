@@ -18,8 +18,7 @@ import D3_9 from "./d3/d3-9";
 function App() {
   return (
     <div className="App">
-
-      <D3_9 />
+      <D3_10 />
     </div>
   );
 }

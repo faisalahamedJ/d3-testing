@@ -4,7 +4,6 @@ import pod from "../images/podSvg.svg";
 export const Generategraph = (onClickOfCount, Data) => {
   const SVGElement = d3.select("#g-section");
 
-
   const linkElements = SVGElement.selectAll("g.link-group")
     .data(Data.edges)
     .enter()
@@ -22,19 +21,20 @@ export const Generategraph = (onClickOfCount, Data) => {
     .style("marker-start", "url(#start-marker)")
     .style("marker-end", "url(#end-marker)");
 
-
-  const parentNode = SVGElement.selectAll("circle")
+  const parentNodeGroup = SVGElement.selectAll("g.parent-group")
     .data(Data.nodes)
     .enter()
+    .append("g")
+    .attr("class", "parent-group");
+
+  const parentNode = parentNodeGroup
     .append("circle")
     .attr("class", "Allcircle")
     .attr("id", (d) => `${d.data.name}-circle`)
     .attr("r", 30)
     .attr("fill", "#ffffff75");
 
-  const parentImageElement = SVGElement.selectAll(".imageElement")
-    .data(Data.nodes)
-    .enter()
+  const parentImageElement = parentNodeGroup
     .append("image")
     .attr("class", "imageElement")
     .attr("id", (d) => `${d.data.name}-image`)
@@ -42,9 +42,8 @@ export const Generategraph = (onClickOfCount, Data) => {
     .attr("height", 50)
     .attr("xlink:href", pod);
 
-  const childNode = parentNode
-    .data(Data.nodes.filter((e) => e.type !== "parent"))
-    .enter()
+  const childNode = parentNodeGroup
+    .filter((node) => node.type !== "parent")
     .append("circle")
     .attr("id", (d) => `${d.data.name}-innerCircle`)
     .attr("class", "innerCircle")
@@ -54,9 +53,8 @@ export const Generategraph = (onClickOfCount, Data) => {
     .style("cursor", "pointer")
     .on("click", onClickOfCount);
 
-  const childNodeCount = parentNode
-    .data(Data.nodes.filter((e) => e.type !== "parent"))
-    .enter()
+  const childNodeCount = parentNodeGroup
+    .filter((node) => node.type !== "parent")
     .append("text")
     .attr("id", (d) => `${d.data.name}-count`)
     .attr("class", "innerCircleCount")
@@ -148,8 +146,8 @@ export const Generategraph2 = (onClickOfCount, Data) => {
     .attr("stroke", "#637fbc")
     .attr("stroke-width", "3px")
     .attr("d", "M50,50 L200,200 L350,50")
-      .style("marker-start", "url(#start-marker)")
-      .style("marker-end", "url(#end-marker)");
+    .style("marker-start", "url(#start-marker)")
+    .style("marker-end", "url(#end-marker)");
 
   // linkElements
   //   .append("text")

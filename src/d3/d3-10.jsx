@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useEffectOnce } from "../hooks/useEffectOnce";
 import { DATASET_3 } from "./mockData";
 import "./style.css";
@@ -8,9 +8,17 @@ import collapse from "../images/collapse.png";
 import pod from "../images/podSvg.svg";
 import IP from "../images/ip.svg";
 import SVC from "../images/svc.svg";
+import OnClickDetailModal from "./Component/OnClickDetailModal";
 
 export default function D3_10() {
   const container = React.useRef(null);
+
+  const [entityDetail, setEntityDetail] = useState();
+  const [xPos, setXPos] = useState(0);
+  const [yPos, setYPos] = useState(0);
+  const [showSelectedDetailsModal, setShowSelectedDetailsModal] =
+    useState(false);
+
   const width = window.innerWidth;
   const height = window.innerHeight;
   const nodes = DATASET_3.nodes;
@@ -204,6 +212,12 @@ export default function D3_10() {
       .attr("y", (d) => d.y - d.r * 0.75) // Adjust the y position as per your requirement
       .attr("width", (d) => d.r * 1.5)
       .attr("height", (d) => d.r * 1.5)
+      .on("click", (e, d) => {
+        setXPos(e.pageX);
+        setYPos(e.pageY);
+        setEntityDetail({ ...d?.data?.data, typ: "child", group_type: "ip" });
+        setShowSelectedDetailsModal(!showSelectedDetailsModal);
+      })
       .on("mouseenter", (e, d) => {
         d3.select(`#packChild-${d.data.name}`)
           .transition()
@@ -351,21 +365,31 @@ export default function D3_10() {
   // useEffect(() => {
   // },[])
   return (
-    <div style={{ margin: "50px", background: "#0002" }}>
-      <div style={{ width: "100%", height: "80vh", position: "relative" }}>
-        <svg
-          id="hybridSVG"
-          ref={container}
-          viewBox="0 0 1500 900"
-          style={{
-            height: "100%",
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          <g id="g-section"></g>
-        </svg>
+    <>
+      <div style={{ margin: "50px", background: "#0002" }}>
+        <div style={{ width: "100%", height: "80vh", position: "relative" }}>
+          <svg
+            id="hybridSVG"
+            ref={container}
+            viewBox="0 0 1500 900"
+            style={{
+              height: "100%",
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            <g id="g-section"></g>
+          </svg>
+        </div>
       </div>
-    </div>
+      {showSelectedDetailsModal && (
+        <OnClickDetailModal
+          data={entityDetail}
+          setShowDetailModal={setShowSelectedDetailsModal}
+          xPos={xPos}
+          yPos={yPos}
+        />
+      )}
+    </>
   );
 }
